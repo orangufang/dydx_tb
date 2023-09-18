@@ -1,8 +1,10 @@
 from func_private import place_market_order, check_order_status
 from datetime import datetime, timedelta
-# from func_messaging import send_message
+from func_messaging import send_message
 import time
+
 from pprint import pprint
+
 
 # Class: Agent for managing opening and checking trades
 class BotAgent:
@@ -11,7 +13,7 @@ class BotAgent:
     Primary function of BotAgent handles opening and checking order status
   """
 
-# Initialize class
+  # Initialize class
   def __init__(
     self,
     client,
@@ -28,7 +30,7 @@ class BotAgent:
     half_life,
     hedge_ratio,
   ):
-    
+
     # Initialize class variables
     self.client = client
     self.market_1 = market_1
@@ -64,7 +66,7 @@ class BotAgent:
       "comments": "",
     }
 
-    # Check order status by id
+  # Check order status by id
   def check_order_status_by_id(self, order_id):
 
     # Allow time to process
@@ -78,7 +80,7 @@ class BotAgent:
       print(f"{self.market_1} vs {self.market_2} - Order cancelled...")
       self.order_dict["pair_status"] = "FAILED"
       return "failed"
-    
+
     # Guard: If order not filled wait until order expiration
     if order_status != "FAILED":
       time.sleep(15)
@@ -89,17 +91,17 @@ class BotAgent:
         print(f"{self.market_1} vs {self.market_2} - Order cancelled...")
         self.order_dict["pair_status"] = "FAILED"
         return "failed"
-      
+
       # Guard: If not filled, cancel order
       if order_status != "FILLED":
         self.client.private.cancel_order(order_id=order_id)
         self.order_dict["pair_status"] = "ERROR"
         print(f"{self.market_1} vs {self.market_2} - Order error...")
         return "error"
-    
+
     # Return live
     return "live"
-  
+
   # Open trades
   def open_trades(self):
 
@@ -127,7 +129,7 @@ class BotAgent:
       self.order_dict["pair_status"] = "ERROR"
       self.order_dict["comments"] = f"Market 1 {self.market_1}: , {e}"
       return self.order_dict
-    
+
     # Ensure order is live before processing
     order_status_m1 = self.check_order_status_by_id(self.order_dict["order_id_m1"])
 
@@ -136,7 +138,7 @@ class BotAgent:
       self.order_dict["pair_status"] = "ERROR"
       self.order_dict["comments"] = f"{self.market_1} failed to fill"
       return self.order_dict
-    
+
     # Print status - opening second order
     print("---")
     print(f"{self.market_2}: Placing second order...")
@@ -161,7 +163,7 @@ class BotAgent:
       self.order_dict["pair_status"] = "ERROR"
       self.order_dict["comments"] = f"Market 2 {self.market_2}: , {e}"
       return self.order_dict
-    
+
     # Ensure order is live before processing
     order_status_m2 = self.check_order_status_by_id(self.order_dict["order_id_m2"])
 
@@ -189,6 +191,9 @@ class BotAgent:
           print("Unexpected Error")
           print(order_status_close_order)
 
+          # Send Message
+          send_message("Failed to execute. Code red. Error code: 100")
+
           # ABORT
           exit(1)
       except Exception as e:
@@ -199,7 +204,7 @@ class BotAgent:
         print(order_status_close_order)
 
         # Send Message
-        # send_message("Failed to execute. Code red. Error code: 101")
+        send_message("Failed to execute. Code red. Error code: 101")
 
         # ABORT
         exit(1)
@@ -208,4 +213,5 @@ class BotAgent:
     else:
       self.order_dict["pair_status"] = "LIVE"
       return self.order_dict
+      
       
