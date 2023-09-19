@@ -8,7 +8,7 @@ def format_number(curr_num, match_num):
     Give current number an example of number with decimals desired
     Function will return the correctly formatted string
   """
-  
+
   curr_num_string = f"{curr_num}"
   match_num_string = f"{match_num}"
 
@@ -19,12 +19,14 @@ def format_number(curr_num, match_num):
     return curr_num_string
   else:
     return f"{int(curr_num)}"
- 
- # Format time
+
+
+# Format time
 def format_time(timestamp):
   return timestamp.replace(microsecond=0).isoformat()
- 
-  # Get ISO Times
+
+
+# Get ISO Times
 def get_ISO_times():
 
   # Get timestamps
@@ -53,5 +55,6 @@ def get_ISO_times():
       "to_iso": format_time(date_start_3),
     },
   }
-# Return result
+
+  # Return result
   return times_dict

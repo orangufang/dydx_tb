@@ -3,11 +3,13 @@ from func_utils import format_number
 from func_public import get_candles_recent
 from func_cointegration import calculate_zscore
 from func_private import is_open_positions
+from func_messaging import send_message
 from func_bot_agent import BotAgent
 import pandas as pd
 import json
 
-from pprint import pprint 
+from pprint import pprint
+
 
 # Open positions
 def open_positions(client):
@@ -17,13 +19,13 @@ def open_positions(client):
     Store trades for managing later on on exit function
   """
 
-# Load cointegrated pairs
+  # Load cointegrated pairs
   df = pd.read_csv("cointegrated_pairs.csv")
 
-# Get markets from referencing of min order size, tick size etc
+  # Get markets from referencing of min order size, tick size etc
   markets = client.public.get_markets().data
 
-# Initialize container for BotAgent results
+  # Initialize container for BotAgent results
   bot_agents = []
 
   # Opening JSON file
@@ -34,7 +36,7 @@ def open_positions(client):
       bot_agents.append(p)
   except:
     bot_agents = []
-
+  
   # Find ZScore triggers
   for index, row in df.iterrows():
 
@@ -43,12 +45,13 @@ def open_positions(client):
     quote_market = row["quote_market"]
     hedge_ratio = row["hedge_ratio"]
     half_life = row["half_life"]
+  
 
     # Get prices
     series_1 = get_candles_recent(client, base_market)
     series_2 = get_candles_recent(client, quote_market)
-   
-   # Get ZScore
+
+    # Get ZScore
     if len(series_1) > 0 and len(series_1) == len(series_2):
       spread = series_1 - (hedge_ratio * series_2)
       z_score = calculate_zscore(spread).values.tolist()[-1]
@@ -129,9 +132,13 @@ def open_positions(client):
             # Open Trades
             bot_open_dict = bot_agent.open_trades()
 
+            # Guard: Handle failure
+            if bot_open_dict == "failed":
+              continue
+
             # Handle success in opening trades
             if bot_open_dict["pair_status"] == "LIVE":
-              
+
               # Append to list of bot agents
               bot_agents.append(bot_open_dict)
               del(bot_open_dict)
@@ -140,7 +147,7 @@ def open_positions(client):
               print("Trade status: Live")
               print("---")
 
-# Save agents
+  # Save agents
   print(f"Success: Manage open trades checked")
   if len(bot_agents) > 0:
     with open("bot_agents.json", "w") as f:
