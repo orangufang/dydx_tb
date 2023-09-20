@@ -7,6 +7,8 @@ from func_bot_agent import BotAgent
 import pandas as pd
 import json
 
+from pprint import pprint
+
 
 # Open positions
 def open_positions(client):
@@ -72,7 +74,7 @@ def open_positions(client):
           quote_price = series_2[-1]
           accept_base_price = float(base_price) * 1.01 if z_score < 0 else float(base_price) * 0.99
           accept_quote_price = float(quote_price) * 1.01 if z_score > 0 else float(quote_price) * 0.99
-          failsafe_base_price = float(base_price) * 0.05 if z_score < 0 else float(base_price) * 1.7
+          failsafe_base_price = float(base_price) * 0.1 if z_score < 0 else float(base_price) * 1.70
           base_tick_size = markets["markets"][base_market]["tickSize"]
           quote_tick_size = markets["markets"][quote_market]["tickSize"]
 
@@ -80,11 +82,11 @@ def open_positions(client):
           accept_base_price = format_number(accept_base_price, base_tick_size)
           accept_quote_price = format_number(accept_quote_price, quote_tick_size)
           accept_failsafe_base_price = format_number(failsafe_base_price, base_tick_size)
-
+          
           # Get size
           base_quantity = 1 / base_price * USD_PER_TRADE
           quote_quantity = 1 / quote_price * USD_PER_TRADE
-          base_step_size = markets["markets"][base_market]["stepSize"]
+          base_step_size = markets["markets"][base_market]["stepSize"] 
           quote_step_size = markets["markets"][quote_market]["stepSize"]
 
           # Format sizes
@@ -94,11 +96,20 @@ def open_positions(client):
           # Ensure size
           base_min_order_size = markets["markets"][base_market]["minOrderSize"]
           quote_min_order_size = markets["markets"][quote_market]["minOrderSize"]
-          check_base = float(base_quantity) > float(base_min_order_size)
-          check_quote = float(quote_quantity) > float(quote_min_order_size)
+          base_quantity_float = float(base_quantity)
+          quote_quantity_float = float(quote_quantity)
 
-          # If checks pass, place trades
-          if check_base and check_quote:
+          check_base_min = base_quantity_float > float(base_min_order_size)
+          check_quote_min = quote_quantity_float > float(quote_min_order_size)
+
+          # Check if quantities are within the threshold of 0.01 to 350
+          threshold_min = 0.01
+          threshold_max = 750
+
+          check_threshold = threshold_min <= base_quantity_float <= threshold_max and threshold_min <= quote_quantity_float <= threshold_max
+
+          # Check if all conditions are met
+          if check_base_min and check_quote_min and check_threshold:
 
             # Check account balance
             account = client.private.get_account()

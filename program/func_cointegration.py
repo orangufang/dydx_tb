@@ -29,7 +29,6 @@ def calculate_zscore(spread):
   zscore = (x - mean) / std
   return zscore
 
-
 # Calculate Cointegration
 def calculate_cointegration(series_1, series_2):
   series_1 = np.array(series_1).astype(float)
@@ -46,7 +45,6 @@ def calculate_cointegration(series_1, series_2):
   t_check = coint_t < critical_value
   coint_flag = 1 if p_value < 0.05 and t_check else 0
   return coint_flag, hedge_ratio, half_life
-
 
 # Store Cointegration Results
 def store_cointegration_results(df_market_prices):
