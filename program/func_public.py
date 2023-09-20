@@ -1,12 +1,14 @@
 from constants import RESOLUTION
 from func_utils import get_ISO_times
-from pprint import pprint 
+import pandas as pd
+import numpy as np
 import time
-import pandas as pd 
-import numpy as np 
+
+from pprint import pprint
 
 # Get relevant time periods for ISO from and to
 ISO_TIMES = get_ISO_times()
+
 
 # Get Candles recent
 def get_candles_recent(client, market):
@@ -30,8 +32,9 @@ def get_candles_recent(client, market):
 
   # Construct and return close price series
   close_prices.reverse()
-  prices_result = np.array(close_prices).astype(float)
+  prices_result = np.array(close_prices).astype(np.float)
   return prices_result
+
 
 # Get Candles Historical
 def get_candles_historical(client, market):
@@ -67,6 +70,7 @@ def get_candles_historical(client, market):
   close_prices.reverse()
   return close_prices
 
+
 # Construct market prices
 def construct_market_prices(client):
 
@@ -94,7 +98,7 @@ def construct_market_prices(client):
     df = pd.merge(df, df_add, how="outer", on="datetime", copy=False)
     del df_add
 
-# Check any columns with NaNs
+  # Check any columns with NaNs
   nans = df.columns[df.isna().any()].tolist()
   if len(nans) > 0:
     print("Dropping columns: ")

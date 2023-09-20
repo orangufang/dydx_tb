@@ -3,8 +3,6 @@ from func_utils import format_number
 import time
 import json
 
-from pprint import pprint
-
 
 # Get existing open positions
 def is_open_positions(client, market):

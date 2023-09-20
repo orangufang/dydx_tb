@@ -3,7 +3,6 @@ from func_utils import format_number
 from func_public import get_candles_recent
 from func_cointegration import calculate_zscore
 from func_private import place_market_order
-from func_messaging import send_message
 import json
 import time
 
@@ -151,7 +150,7 @@ def manage_trade_exits(client):
 
         # Close position for market 1
         print(">>> Closing market 1 <<<")
-        send_message(f"Closing position for {position_market_m1}")
+        print(f"Closing position for {position_market_m1}")
 
         close_order_m1 = place_market_order(
           client,
@@ -170,7 +169,7 @@ def manage_trade_exits(client):
 
         # Close position for market 2
         print(">>> Closing market 2 <<<")
-        send_message(f"Closing position for {position_market_m2}")
+        print(f"Closing position for {position_market_m2}")
 
         close_order_m2 = place_market_order(
           client,

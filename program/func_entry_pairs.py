@@ -3,12 +3,9 @@ from func_utils import format_number
 from func_public import get_candles_recent
 from func_cointegration import calculate_zscore
 from func_private import is_open_positions
-from func_messaging import send_message
 from func_bot_agent import BotAgent
 import pandas as pd
 import json
-
-from pprint import pprint
 
 
 # Open positions
