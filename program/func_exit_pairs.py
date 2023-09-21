@@ -1,4 +1,4 @@
-from constants import CLOSE_AT_ZSCORE_CROSS
+from constants import CLOSE_AT_ZSCORE_CROSS, USD_PER_TRADE
 from func_utils import format_number
 from func_public import get_candles_recent
 from func_cointegration import calculate_zscore
@@ -117,10 +117,10 @@ def manage_trade_exits(client):
         # Initiate close trigger
         is_close = True
 
-    ###
-    # Add any other close logic you want here
-    # Trigger is_close
-    ###
+        # Check if the position size is less than 90% of the USD_MIN_TRADE limit
+    if position_size_m1 < 0.9 * USD_PER_TRADE or position_size_m2 < 0.9 * USD_PER_TRADE:
+        # Close the trade here
+        is_close = True
 
     # Close positions if triggered
     if is_close:

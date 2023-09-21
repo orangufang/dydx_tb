@@ -1,4 +1,4 @@
-from constants import ZSCORE_THRESH, USD_PER_TRADE, USD_MIN_COLLATERAL
+from constants import ZSCORE_THRESH, USD_PER_TRADE, USD_MIN_COLLATERAL, SIZE_ENTRY_THRESHOLD_MAX, SIZE_ENTRY_THRESHOLD_MIN
 from func_utils import format_number
 from func_public import get_candles_recent
 from func_cointegration import calculate_zscore
@@ -103,10 +103,8 @@ def open_positions(client):
           check_quote_min = quote_quantity_float > float(quote_min_order_size)
 
           # Check if quantities are within the threshold of 0.01 to 350
-          threshold_min = 0.01
-          threshold_max = 750
-
-          check_threshold = threshold_min <= base_quantity_float <= threshold_max and threshold_min <= quote_quantity_float <= threshold_max
+          
+          check_threshold = SIZE_ENTRY_THRESHOLD_MIN <= base_quantity_float <= SIZE_ENTRY_THRESHOLD_MAX and SIZE_ENTRY_THRESHOLD_MIN <= quote_quantity_float <= SIZE_ENTRY_THRESHOLD_MAX
 
           # Check if all conditions are met
           if check_base_min and check_quote_min and check_threshold:
