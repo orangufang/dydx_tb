@@ -117,11 +117,6 @@ def manage_trade_exits(client):
         # Initiate close trigger
         is_close = True
 
-        # Check if the position size is less than 90% of the USD_MIN_TRADE limit
-    if position_size_m1 < 0.9 * USD_PER_TRADE or position_size_m2 < 0.9 * USD_PER_TRADE:
-        # Close the trade here
-        is_close = True
-
     # Close positions if triggered
     if is_close:
 
